@@ -5,6 +5,7 @@ import MarketingApp from "./components/MarketingApp";
 import Header from "./components/Header";
 
 const generateClassName = createGenerateClassName({
+  disableGlobal: true,
   productionPrefix: "co",
 });
 
@@ -12,7 +13,7 @@ const App = () => {
   return (
     <StylesProvider generateClassName={generateClassName}>
       <BrowserRouter>
-        <div className="test">
+        <div>
           <Header />
           <MarketingApp />
         </div>
