@@ -9,6 +9,7 @@ const prodConfig = {
     filename: "[name].[contenthash].js",
     publicPath: "/dashboard/latest/",
   },
+
   plugins: [
     new ModuleFederationPlugin({
       name: "dashboard",
