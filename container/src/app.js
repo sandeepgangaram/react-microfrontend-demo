@@ -1,9 +1,10 @@
-import React, { lazy, Suspense, useState } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import React, { lazy, Suspense, useState, useEffect } from "react";
+import { Router, Switch, Route, Redirect } from "react-router-dom";
 import {
   StylesProvider,
   createGenerateClassName,
 } from "@material-ui/core/styles";
+import { createBrowserHistory } from "history";
 
 import ProgressBar from "./components/ProgressBar";
 import Header from "./components/Header";
@@ -17,26 +18,40 @@ const generateClassName = createGenerateClassName({
   productionPrefix: "co",
 });
 
+const history = createBrowserHistory();
+
 const App = () => {
-  const [signIn, setIsSignIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    if (isSignedIn) {
+      history.push("/dashboard");
+    }
+  }, [isSignedIn]);
 
   return (
-    <BrowserRouter>
+    <Router history={history}>
       <StylesProvider generateClassName={generateClassName}>
         <div>
-          <Header signedIn={signIn} onSignOut={() => setIsSignIn(false)} />
+          <Header
+            signedIn={isSignedIn}
+            onSignOut={() => setIsSignedIn(false)}
+          />
           <Suspense fallback={<ProgressBar />}>
             <Switch>
               <Route path="/auth">
-                <AuthLazy onSignIn={() => setIsSignIn(true)} />
+                <AuthLazy onSignIn={() => setIsSignedIn(true)} />
               </Route>
-              <Route path="/dashboard" component={DashboardLazy} />
+              <Route path="/dashboard">
+                {isSignedIn ? <DashboardLazy /> : <Redirect to="/" />}
+                {/* <DashboardLazy /> */}
+              </Route>
               <Route path="/" component={MarketingLazy} />
             </Switch>
           </Suspense>
         </div>
       </StylesProvider>
-    </BrowserRouter>
+    </Router>
   );
 };
 
